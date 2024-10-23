@@ -1,21 +1,38 @@
 <launch>
     <!-- 定义参数 -->
     <arg name="resolution" default="0.5" />
+    
+    <!-- set input data Z-axis height -->
+    <!-- 设置输入数据的z轴高低 -->
     <arg name="z_min" default="0.1" />
     <arg name="z_max" default="1.5" />
+
+    <!--set lidar input data  range  -->
+    <!-- 设置 输入数据的范围 -->
     <arg name="range_min" default="0.5" />
     <arg name="range_max" default="50.0" />
+
+
+    <!-- if you want use the 3d point intensity is true -->
+    <!-- 如果你想要使用3d 点云的强度设置为true -->
     <arg name="if_use_original_point_intensity" default="false" />
 
-    <!-- 启动节点并将参数传递给它 -->
+    <!-- input 3d point data -->
+    <arg name="input_topic" default="points_raw" />
+    
+    <!-- output 2d point data -->
+    <arg name="output_topic" default="scan" />      
+
+
     <node name="point2scan" pkg="point2scan" type="point2scan_node" output="screen">
-        <!-- 使用私有参数（在该节点的私有命名空间中） -->
         <param name="~resolution" value="$(arg resolution)" />
         <param name="~z_min" value="$(arg z_min)" />
         <param name="~z_max" value="$(arg z_max)" />
         <param name="~range_min" value="$(arg range_min)" />
         <param name="~range_max" value="$(arg range_max)" />
         <param name="~if_use_original_point_intensity" value="$(arg if_use_original_point_intensity)" />
+        <param name="~output_topic" value="$(arg output_topic)" />
+        <param name="~input_topic" value="$(arg input_topic)" />
     </node>
 </launch>
 

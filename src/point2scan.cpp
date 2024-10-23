@@ -6,7 +6,7 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/passthrough.h>
 #include <cmath>
-
+using std::string;
 ros::Publisher scan_pub;
 bool if_use_original_point_intensity;
 float z_max;
@@ -16,6 +16,8 @@ float range_max;
 float resolution;
 float angle_increment;
 int num_angles;
+string input_topic;
+string output_topic;
 
 // 将点云转换为二维激光扫描数据
 void cloud_cb(const sensor_msgs::PointCloud2ConstPtr& input) {
@@ -97,7 +99,8 @@ int main(int argc, char** argv) {
 	private_node.param("range_min", range_min, 0.0f); // 默认最小距离
 	private_node.param("range_max", range_max, 100.0f); // 默认最大距离
 	private_node.param("if_use_original_point_intensity", if_use_original_point_intensity, false);
-
+	private_node.param("input_topic", input_topic, string("points_raw"));
+    private_node.param("output_topic", output_topic, string("scan"));
 
     // 计算角度数量和角度增量
     num_angles = static_cast<int>(360 / resolution); // 总角度数
@@ -115,10 +118,10 @@ int main(int argc, char** argv) {
     ROS_INFO("  angle_increment: %.5f rad", angle_increment);
 
     // 订阅/points_raw话题
-    ros::Subscriber sub = nh.subscribe("/points_raw", 1, cloud_cb);
+    ros::Subscriber sub = nh.subscribe(input_topic, 1, cloud_cb);
 
     // 创建发布者，发布到/scan话题
-    scan_pub = nh.advertise<sensor_msgs::LaserScan>("/scan", 1);
+    scan_pub = nh.advertise<sensor_msgs::LaserScan>(output_topic, 1);
 
     // 循环等待回调
     ros::spin();
